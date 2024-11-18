@@ -4,7 +4,6 @@ import { Engine } from './engine';
 import Info from './Info';
 import Search from './Search/Search';
 import SelectedStations from './Selection/SelectedStations';
-import Fork from './fork';
 import * as qs from 'query-string';
 import Highlights from './highlights';
 import DateSlider from './Options/DateSlider';
@@ -18,6 +17,21 @@ function getCorsFreeUrl(url) {
     return url;
 }
 
+
+//https://celestrak.org/NORAD/elements/gp.php?GROUP=active&FORMAT=JSON-PRETTY <- use
+/*
+    TODO:
+        add launch origin to sattelite by name 
+        using above json line
+            response.json 
+            .then(stations.map((s) => {
+                TODO: add category and origin
+                } )
+        once done, do same for 'category'
+        create filter element checkboxes for origin, category, etc
+        checkboxes that call select station on each station that meets the checkbox's criteria
+
+*/
 class App extends Component {
 
     state = {
@@ -132,6 +146,10 @@ class App extends Component {
             .then(stations => {
                 this.setState({stations});
                 this.processQuery(stations);
+                console.log(stations)
+                /* add extra data processing i.e.
+                    add origin and category, ?ownership
+                */
             });
 
     }
@@ -194,7 +212,6 @@ class App extends Component {
 
         return (
             <div>
-                <Fork />
                 <Highlights query={this.state.query} total={this.state.queryObjectCount} />
                 <Info stations={stations} refMode={this.state.referenceFrame} />
                 <Search stations={this.state.stations} onResultClick={this.handleSearchResultClick} />
