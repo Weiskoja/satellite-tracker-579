@@ -29,7 +29,22 @@ function getCorsFreeUrl(url) {
                 } )
         once done, do same for 'category'
         create filter element checkboxes for origin, category, etc
+        https://celestrak.org/satcat/records.php?{QUERY}=VALUE[&FORMAT=VALUE] <- use for satellite info
+        .fetch(https://celestrak.org/satcat/records.php?GROUP=ACTIVE)
+            .then(const response = response.JSON())
+            .then(stations.map(
+            ))
+        for stations.map (.fe)
+
         checkboxes that call select station on each station that meets the checkbox's criteria
+
+
+
+
+        getting categories:
+        curl https://www.n2yo.com/satellites/\?c\=52\&p\=A  <- all starlink, would have to do webscraping of each category page to build a reference list of 
+        sattelites in each category to add a category to each station object. Is this right/what is better way to do it?      
+
 
 */
 class App extends Component {
