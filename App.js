@@ -7,6 +7,7 @@ import SelectedStations from './Selection/SelectedStations';
 import * as qs from 'query-string';
 import Highlights from './highlights';
 import DateSlider from './Options/DateSlider';
+import Checkboxes from './Checkboxes.js';
 
 // Some config
 const UseDateSlider = false;
@@ -161,11 +162,28 @@ class App extends Component {
             .then(stations => {
                 this.setState({stations});
                 this.processQuery(stations);
-                console.log(stations)
+                //console.log(stations)
                 /* add extra data processing i.e.
                     add origin and category, ?ownership
                 */
+            })
+            .then(stations => {
+                fetch('https://celestrak.org/satcat/records.php?GROUP=ACTIVE')
+                .then(response => (response.json()))
+                .then(data => {
+                    const updatedStations = this.state.stations.map(station => {
+                        const match = data.find(item => item.OBJECT_NAME === station.name);
+                        if (match) {
+                            return { ...station, owner: match.OWNER };
+                        }
+                        return station;
+                    });
+            
+                    this.setState({ stations: updatedStations });
+                    console.log(this.state.stations)
+                })
             });
+            
 
     }
 
@@ -220,6 +238,27 @@ class App extends Component {
         return result.toString();
     }
 
+    updateStationsWithOwner = (data) => {
+        const updatedStations = this.state.stations.map(station => {
+            const match = data.find(item => item.OBJECT_NAME === station.name);
+            if (match) {
+                return { ...station, owner: match.OWNER };
+            }
+            return station;
+        });
+
+        this.setState({ stations: updatedStations });
+    }
+
+    handleOwnerFilterChange = (selectedOwners) => {
+        const selectedStations = this.state.stations.filter(station => 
+            selectedOwners.includes(station.owner)
+        );
+        this.setState({ selected: selectedStations });
+    }
+
+
+
     render() {
         const { selected, stations, initialDate, currentDate } = this.state;
 
@@ -230,6 +269,7 @@ class App extends Component {
                 <Highlights query={this.state.query} total={this.state.queryObjectCount} />
                 <Info stations={stations} refMode={this.state.referenceFrame} />
                 <Search stations={this.state.stations} onResultClick={this.handleSearchResultClick} />
+                <Checkboxes stations={stations} onOwnerFilterChange={this.handleOwnerFilterChange} />
                 <SelectedStations selected={selected} onRemoveStation={this.handleRemoveSelected} onRemoveAll={this.handleRemoveAllSelected} />
                 {UseDateSlider && <DateSlider min={initialDate} max={maxMs} value={currentDate} onChange={this.handleDateChange} onRender={this.renderDate} />}
                 <div ref={c => this.el = c} style={{ width: '99%', height: '99%' }} />
@@ -238,6 +278,6 @@ class App extends Component {
     }
 }
 
-
+//{                <Checkboxes stations = {stations} onResultClick={this.handleSearchResultClick}></Checkboxes>}
 
 export default App;
