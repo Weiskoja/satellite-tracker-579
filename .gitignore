@@ -6,6 +6,9 @@
 # testing
 /coverage
 
+#backup
+/Checkboxes-copy.js
+
 # production
 /build
 /buildprivate
