@@ -6,7 +6,9 @@
   "scripts": {
     "start": "parcel index.html",
     "build": "parcel build index.html",
-    "publish": "parcel build index.html --public-url ./ --out-dir docs"
+    "publish": "parcel build index.html --public-url ./ --out-dir docs",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "author": "David Suárez (github.com/dsuarezv)",
   "dependencies": {
@@ -26,6 +28,7 @@
     "@babel/preset-react": "^7.12.13",
     "@types/react": "^16.14.4",
     "babel-plugin-transform-class-properties": "^6.24.1",
+    "gh-pages": "^6.2.0",
     "parcel-bundler": "^1.12.5"
   }
 }

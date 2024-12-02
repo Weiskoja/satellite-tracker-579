@@ -19,6 +19,9 @@ function getCorsFreeUrl(url) {
 }
 
 
+// deploy from diff page https://stackoverflow.com/questions/36782467/set-subdirectory-as-website-root-on-github-pages
+
+
 //https://celestrak.org/NORAD/elements/gp.php?GROUP=active&FORMAT=JSON-PRETTY <- use
 /*
     TODO:
