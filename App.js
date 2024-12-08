@@ -20,37 +20,6 @@ function getCorsFreeUrl(url) {
 
 
 // deploy from diff page https://stackoverflow.com/questions/36782467/set-subdirectory-as-website-root-on-github-pages
-
-
-//https://celestrak.org/NORAD/elements/gp.php?GROUP=active&FORMAT=JSON-PRETTY <- use
-/*
-    TODO:
-        add launch origin to sattelite by name 
-        using above json line
-            response.json 
-            .then(stations.map((s) => {
-                TODO: add category and origin
-                } )
-        once done, do same for 'category'
-        create filter element checkboxes for origin, category, etc
-        https://celestrak.org/satcat/records.php?{QUERY}=VALUE[&FORMAT=VALUE] <- use for satellite info
-        .fetch(https://celestrak.org/satcat/records.php?GROUP=ACTIVE)
-            .then(const response = response.JSON())
-            .then(stations.map(
-            ))
-        for stations.map (.fe)
-
-        checkboxes that call select station on each station that meets the checkbox's criteria
-
-
-
-
-        getting categories:
-        curl https://www.n2yo.com/satellites/\?c\=52\&p\=A  <- all starlink, would have to do webscraping of each category page to build a reference list of 
-        sattelites in each category to add a category to each station object. Is this right/what is better way to do it?      
-
-
-*/
 class App extends Component {
 
     state = {
@@ -165,11 +134,18 @@ class App extends Component {
             .then(stations => {
                 this.setState({stations});
                 this.processQuery(stations);
-                //console.log(stations)
-                /* add extra data processing i.e.
-                    add origin and category, ?ownership
-                */
+                
             })
+            
+
+            /*
+            This code block fetches all active satellites in the celestrack catalogue and updates the satellites with their owners.
+
+            @param {promise} response - initial response from fetch request to celstrack api
+            @param {promise} data - json serialized data of `response`
+            @param {three.js custom object} station - three.js object of each satellite. Contains the info about the satellite. 
+            @param {object} item - each satellite info object from celestrak.
+            */
             .then(stations => {
                 fetch('https://celestrak.org/satcat/records.php?GROUP=ACTIVE')
                 .then(response => (response.json()))
@@ -183,7 +159,6 @@ class App extends Component {
                     });
             
                     this.setState({ stations: updatedStations });
-                    console.log(this.state.stations)
                 })
             });
             
@@ -241,6 +216,16 @@ class App extends Component {
         return result.toString();
     }
 
+    /*
+    Updates the stations in the state with their respective owners.
+    This function takes an array of data objects and maps through the current
+    stations in the state. For each station, it finds a matching object in the
+    data array based on the station's name. If a match is found, it updates the
+    station with the owner information from the matched object.
+    
+    @param {Array} data - An array of objects containing satellite information.
+    Each object should have an `OBJECT_NAME` property and an `OWNER` property.
+     */
     updateStationsWithOwner = (data) => {
         const updatedStations = this.state.stations.map(station => {
             const match = data.find(item => item.OBJECT_NAME === station.name);
@@ -253,7 +238,13 @@ class App extends Component {
         this.setState({ stations: updatedStations });
     }
 
+
+    /*
+        Filters the stations based on the selected owners, updating the state to reflect this.
+        @returns {Array} An array of stations that are owned by the selected owners.
+     */
     handleOwnerFilterChange = (selectedOwners) => {
+        
         const selectedStations = this.state.stations.filter(station => 
             selectedOwners.includes(station.owner)
         );
@@ -281,6 +272,6 @@ class App extends Component {
     }
 }
 
-//{                <Checkboxes stations = {stations} onResultClick={this.handleSearchResultClick}></Checkboxes>}
+
 
 export default App;

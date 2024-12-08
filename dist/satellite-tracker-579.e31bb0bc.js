@@ -71065,6 +71065,9 @@ var Checkboxes = /*#__PURE__*/function (_Component) {
           checked: selectedOwners.includes(owner),
           onChange: function onChange() {
             return _this2.handleOwnerChange(owner);
+          },
+          onClick: function onClick() {
+            return _this2.props.onOwnerFilterChange([owner]);
           }
         }), /*#__PURE__*/_react.default.createElement("label", {
           htmlFor: owner
@@ -71147,36 +71150,7 @@ var DateSliderRangeInMilliseconds = 24 * 60 * 60 * 1000; // 24 hours
 
 function getCorsFreeUrl(url) {
   return url;
-} //https://celestrak.org/NORAD/elements/gp.php?GROUP=active&FORMAT=JSON-PRETTY <- use
-
-/*
-    TODO:
-        add launch origin to sattelite by name 
-        using above json line
-            response.json 
-            .then(stations.map((s) => {
-                TODO: add category and origin
-                } )
-        once done, do same for 'category'
-        create filter element checkboxes for origin, category, etc
-        https://celestrak.org/satcat/records.php?{QUERY}=VALUE[&FORMAT=VALUE] <- use for satellite info
-        .fetch(https://celestrak.org/satcat/records.php?GROUP=ACTIVE)
-            .then(const response = response.JSON())
-            .then(stations.map(
-            ))
-        for stations.map (.fe)
-
-        checkboxes that call select station on each station that meets the checkbox's criteria
-
-
-
-
-        getting categories:
-        curl https://www.n2yo.com/satellites/\?c\=52\&p\=A  <- all starlink, would have to do webscraping of each category page to build a reference list of 
-        sattelites in each category to add a category to each station object. Is this right/what is better way to do it?      
-
-
-*/
+} // deploy from diff page https://stackoverflow.com/questions/36782467/set-subdirectory-as-website-root-on-github-pages
 
 
 var App = /*#__PURE__*/function (_Component) {
@@ -71283,13 +71257,16 @@ var App = /*#__PURE__*/function (_Component) {
           stations: stations
         });
 
-        _this.processQuery(stations); //console.log(stations)
-
-        /* add extra data processing i.e.
-            add origin and category, ?ownership
-        */
-
-      }).then(function (stations) {
+        _this.processQuery(stations);
+      })
+      /*
+      This code block fetches all active satellites in the celestrack catalogue and updates the satellites with their owners.
+       @param {promise} response - initial response from fetch request to celstrack api
+      @param {promise} data - json serialized data of `response`
+      @param {three.js custom object} station - three.js object of each satellite. Contains the info about the satellite. 
+      @param {object} item - each satellite info object from celestrak.
+      */
+      .then(function (stations) {
         fetch('https://celestrak.org/satcat/records.php?GROUP=ACTIVE').then(function (response) {
           return response.json();
         }).then(function (data) {
@@ -71310,8 +71287,6 @@ var App = /*#__PURE__*/function (_Component) {
           _this.setState({
             stations: updatedStations
           });
-
-          console.log(_this.state.stations);
         });
       });
     }, _this.addAmsatSets = function () {
@@ -71463,8 +71438,7 @@ var App = /*#__PURE__*/function (_Component) {
   }]);
 
   return App;
-}(_react.Component); //{                <Checkboxes stations = {stations} onResultClick={this.handleSearchResultClick}></Checkboxes>}
-
+}(_react.Component);
 
 var _default = App;
 exports.default = _default;
@@ -71516,7 +71490,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50264" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "63877" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

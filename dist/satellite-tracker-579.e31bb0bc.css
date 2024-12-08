@@ -43,7 +43,11 @@ h1 {
 }
 
 .Checkboxes {
-    margin-top: 20px; /* Add some space above the checkboxes section */
+    position: absolute;
+    left: 60;
+    top: 300;
+    max-height: 500;
+    overflow: scroll;
 }
 
 .AccordionButton {
